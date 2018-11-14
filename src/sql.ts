@@ -15,6 +15,16 @@ export function initDatabase(database: any, config: DeckConfig) {
     font: 'Arial',
     sticky: false
   }))
+  const templateArray = getTemplateArray(config)
+  const templates = templateArray.map((template, ord) => ({
+    afmt: template.answer,
+    name: template.name || `${config.name}-${ord}`,
+    qfmt: template.question,
+    did: null,
+    ord,
+    bafmt: '',
+    bqfmt: ''
+  }))
 
   let conf = {
     nextPos: 1,
@@ -43,17 +53,7 @@ export function initDatabase(database: any, config: DeckConfig) {
       sortf: 0,
       latexPre:
         '\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n',
-      tmpls: [
-        {
-          afmt: config.card.template.answer,
-          name: config.name,
-          qfmt: config.card.template.question,
-          did: null,
-          ord: 0,
-          bafmt: '',
-          bqfmt: ''
-        }
-      ],
+      tmpls: templates,
       latexPost: '\\end{document}',
       type: 0,
       id: modelId,
@@ -203,8 +203,12 @@ export function insertCard(database: any, deck: DeckConfig, card: Card) {
   const modelId = deck.id + 1
   const fieldsContent = card.content.join('\u001F')
   const sortField = card.content[0]
-  const SQL_CARD = `INSERT INTO cards (id,nid,did,ord,mod,usn,type,queue,due,ivl,factor,reps,lapses,left,odue,odid,flags,data) VALUES (?,  ?,  ?,  0,  ?,  -1,  0,  0,  86400,0,0,0,0,0,0,0,0,'')`
-  database.prepare(SQL_CARD).run(cardId, noteId, deck.id, createTime)
+  const SQL_CARD = `INSERT INTO cards (id,nid,did,ord,mod,usn,type,queue,due,ivl,factor,reps,lapses,left,odue,odid,flags,data) VALUES (?,  ?,  ?,  ?,  ?,  -1,  0,  0,  86400,0,0,0,0,0,0,0,0,'')`
+  const cardTransaction = database.prepare(SQL_CARD)
+  const templateCount = getTemplateArray(deck).length
+  for (let ord = 0; ord < templateCount; ord++) {
+    cardTransaction.run(cardId + ord, noteId, deck.id, ord, createTime)
+  }
 
   const SQL_NOTE = `INSERT INTO notes (id,guid,mid,mod,usn,tags,flds,sfld,csum,flags,data) VALUES (?,  ?,  ?,  ?,  -1,  '',  ?,  ?,  ?,  0,  '');`
   database
@@ -218,4 +222,8 @@ export function insertCard(database: any, deck: DeckConfig, card: Card) {
       sortField,
       parseInt(sha1(sortField).substr(0, 8), 16)
     )
+}
+
+function getTemplateArray (deck: DeckConfig): Array<CardTemplate> {
+  return Array.isArray(deck.card.template) ? deck.card.template : [deck.card.template]
 }

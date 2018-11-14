@@ -63,3 +63,5 @@ apkg.addMedia('unicorn.gif', readFileSync(join(__dirname, 'media/unicorn.gif')))
 apkg.save(__dirname)
 
 ```
+## Templates
+`config.card.template` can also be an array of templates to create multiple cards per note
