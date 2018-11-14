@@ -33,35 +33,18 @@ apkg.addCard({
 apkg.save(__dirname)
 ```
 
-## Media
-
-You can add media files to packages using 
-```ts
-apkg.addMedia(filename: string, data: Buffer)
-```
-
+## `addMedia(filename: string, data: Buffer)`
+Adds media files to package. You can reference `filename` in cards and templates. For example.
 ```js
-const { readFileSync } = require('fs')
-const { join } = require('path')
-
-const { APKG } = require('../')
-
-const apkg = new APKG({
-    name: 'UnicornBuilder',
-    card: {
-        fields: ['question', 'result'],
-        template: {
-            question: '{{question}}',
-            answer: `{{result}}`
-        }
-    }
-})
-apkg.addCard({
-    content: ['What happens if you eat too many skittles?', '<img src="unicorn.gif" />']
-})
 apkg.addMedia('unicorn.gif', readFileSync(join(__dirname, 'media/unicorn.gif')))
-apkg.save(__dirname)
 
+apkg.addCard({
+    content: ['No unicorn', 'Unicorn <img src="unicorn.gif" />']
+})
 ```
+
+## `generateStream()`
+Generates a package and returns a readable stream
+
 ## Templates
 `config.card.template` can also be an array of templates to create multiple cards per note
