@@ -28,18 +28,10 @@ const apkg = new APKG({
 })
 apkg.addCard({
     timestamp: +new Date(), // create time
-    content: ['sample word', 'sample meaning', 'sample usage'] // keep the order same as `fields` defined above
+    content: ['sample word', 'sample meaning', 'sample usage'], // keep the order same as `fields` defined above
+    tags: ['unicorn', 'some tag'] // tags are kebab-cased as spaces are not supported (another tag becomes another-tag)
 })
 apkg.save(__dirname)
-```
-
-## Tags
-Add tags to cards with:
-```js
-apkg.addCard({
-    //...
-    tags: ['a-tag', 'unicorn', 'spaces are replaced-with-hyphens']
-})
 ```
 
 ## TODO
