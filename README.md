@@ -31,6 +31,14 @@ apkg.addCard({
     content: ['sample word', 'sample meaning', 'sample usage'], // keep the order same as `fields` defined above
     tags: ['unicorn', 'some tag'] // tags are kebab-cased as spaces are not supported (another tag becomes another-tag)
 })
+// content can also be added as an object where the keys match the card fields
+apkg.addCard({
+    content: {
+        word: 'another sample',
+        usage: 'sample usage',
+        meaning: 'sample meaning'
+    }
+})
 apkg.save(__dirname)
 ```
 

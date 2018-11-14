@@ -201,8 +201,9 @@ export function insertCard(database: any, deck: DeckConfig, card: Card) {
   const cardId = createTime
   const noteId = cardId + 1
   const modelId = deck.id + 1
-  const fieldsContent = card.content.join('\u001F')
-  const sortField = card.content[0]
+  const contentArray = parseContentObject(card.content, deck.card.fields)
+  const fieldsContent = contentArray.join('\u001F')
+  const sortField = contentArray[0]
   const SQL_CARD = `INSERT INTO cards (id,nid,did,ord,mod,usn,type,queue,due,ivl,factor,reps,lapses,left,odue,odid,flags,data) VALUES (?,  ?,  ?,  ?,  ?,  -1,  0,  0,  86400,0,0,0,0,0,0,0,0,'')`
   const cardTransaction = database.prepare(SQL_CARD)
   const templateCount = getTemplateArray(deck).length
@@ -231,4 +232,27 @@ export function insertCard(database: any, deck: DeckConfig, card: Card) {
 
 function getTemplateArray (deck: DeckConfig): Array<CardTemplate> {
   return Array.isArray(deck.card.template) ? deck.card.template : [deck.card.template]
+}
+
+function parseContentObject (content: Array<string> | { [index: string]: string }, fields: Array<string>) {
+  if (Array.isArray(content)) {
+    if (content.length > fields.length) {
+      throw new Error(`${content.length} fields provided but card only accepts ${fields.length}`)
+    }
+    return content
+  }
+
+  const contentFields = Object.keys(content)
+  let outArray = Array(contentFields.length)
+
+  contentFields.forEach(field => {
+    const index = fields.indexOf(field)
+    if (index === -1) {
+      throw new Error(`${field} is not a valid field for this card`)
+    }
+
+    outArray[index] = content[field]
+  })
+
+  return outArray
 }

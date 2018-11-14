@@ -16,4 +16,11 @@ const apkg = new APKG({
 apkg.addCard({
     content: ['sample word', 'sample meaning', 'sample usage']
 })
+apkg.addCard({
+    content: {
+        word: 'another sample',
+        usage: 'sample usage',
+        meaning: 'sample meaning'
+    }
+})
 apkg.save(__dirname)
