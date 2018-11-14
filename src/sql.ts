@@ -214,8 +214,6 @@ export function insertCard(database: any, deck: DeckConfig, card: Card) {
     ' ' + card.tags.map(tag => tag.replace(/ /g, '-')).join(' ') + ' ' :
     ''
 
-  console.log(tagString)
-
   const SQL_NOTE = `INSERT INTO notes (id,guid,mid,mod,usn,tags,flds,sfld,csum,flags,data) VALUES (?,  ?,  ?,  ?,  -1,  ?,  ?,  ?,  ?,  0,  '');`
   database
     .prepare(SQL_NOTE)
