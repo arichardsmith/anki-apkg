@@ -33,5 +33,14 @@ apkg.addCard({
 apkg.save(__dirname)
 ```
 
+## Tags
+Add tags to cards with:
+```js
+apkg.addCard({
+    //...
+    tags: ['a-tag', 'unicorn', 'spaces are replaced-with-hyphens']
+})
+```
+
 ## TODO
 - [ ] media
