@@ -33,5 +33,8 @@ apkg.addCard({
 apkg.save(__dirname)
 ```
 
+## `generateStream()`
+Generates a package and returns a readable stream
+
 ## TODO
 - [ ] media
