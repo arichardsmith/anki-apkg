@@ -31,19 +31,35 @@ export class APKG {
     writeFileSync(join(this.dest, `${index}`), data)
   }
   save(destination: string) {
-    const directory = join(__dirname, this.config.name)
+    try {
+      const archive = this.generateStream()
+      archive.on('error', err => {
+        throw err
+      })
+      archive.pipe(
+        createWriteStream(join(destination, `${this.config.name}.apkg`))
+      )
+    } catch (err) {
+      this.clean()
+      throw err
+    }
+  }
+  generateStream(): NodeJS.ReadableStream {
     const archive = archiver('zip')
     const mediaObj = this.mediaFiles.reduce((obj, file, idx) => {
       obj[idx] = file
       return obj
     }, {})
     writeFileSync(join(this.dest, 'media'), JSON.stringify(mediaObj))
-    archive.directory(directory, false)
-    archive.pipe(
-      createWriteStream(join(destination, `${this.config.name}.apkg`))
-    )
-    archive.finalize()
+    archive.directory(this.dest, false)
+    archive.on('error', err => {
+      this.clean()
+      throw err
+    })
     archive.on('end', this.clean.bind(this))
+    archive.finalize()
+
+    return archive
   }
   private clean() {
     rimraf(this.dest, () => {})
