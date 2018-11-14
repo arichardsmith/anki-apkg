@@ -33,5 +33,8 @@ apkg.addCard({
 apkg.save(__dirname)
 ```
 
+## Templates
+`config.card.template` can also be an array of templates to create multiple cards per note
+
 ## TODO
 - [ ] media
