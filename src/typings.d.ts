@@ -13,5 +13,6 @@ interface DeckConfig {
 
 interface Card {
   timestamp?: number,
-  content: Array<string>
+  content: Array<string>,
+  tags: Array<string>
 }

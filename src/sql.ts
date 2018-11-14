@@ -206,7 +206,13 @@ export function insertCard(database: any, deck: DeckConfig, card: Card) {
   const SQL_CARD = `INSERT INTO cards (id,nid,did,ord,mod,usn,type,queue,due,ivl,factor,reps,lapses,left,odue,odid,flags,data) VALUES (?,  ?,  ?,  0,  ?,  -1,  0,  0,  86400,0,0,0,0,0,0,0,0,'')`
   database.prepare(SQL_CARD).run(cardId, noteId, deck.id, createTime)
 
-  const SQL_NOTE = `INSERT INTO notes (id,guid,mid,mod,usn,tags,flds,sfld,csum,flags,data) VALUES (?,  ?,  ?,  ?,  -1,  '',  ?,  ?,  ?,  0,  '');`
+  const tagString = (Array.isArray(card.tags) && card.tags.length > 0) ?
+    ' ' + card.tags.map(tag => tag.replace(/ /g, '-')).join(' ') + ' ' :
+    ''
+
+  console.log(tagString)
+
+  const SQL_NOTE = `INSERT INTO notes (id,guid,mid,mod,usn,tags,flds,sfld,csum,flags,data) VALUES (?,  ?,  ?,  ?,  -1,  ?,  ?,  ?,  ?,  0,  '');`
   database
     .prepare(SQL_NOTE)
     .run(
@@ -214,6 +220,7 @@ export function insertCard(database: any, deck: DeckConfig, card: Card) {
       `${cardId}`,
       modelId,
       createTime,
+      tagString,
       fieldsContent,
       sortField,
       parseInt(sha1(sortField).substr(0, 8), 16)
